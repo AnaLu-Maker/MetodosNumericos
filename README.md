@@ -16,7 +16,7 @@ Pasos del algoritmo:
 3. Determinar el nuevo intervalo reemplazando `Xl` o `Xu` según el signo del producto `f(Xl)*f(Xr)`.
 4. Repetir hasta que el error relativo porcentual sea menor o igual al 3%.
 
-## ▶ Instrucciones de uso
+## Instrucciones de uso
 1. Asegúrate de tener Java instalado.
 2. Compila el archivo:
 
