@@ -6,7 +6,7 @@ public class MetodoBiseccion {
         // Crear un objeto Scanner para leer la entrada del usuario
         Scanner scanner = new Scanner(System.in);
  
-        System.out.println("MÉTODO DE BISECCIÓN");
+        System.out.println("--- MÉTODO DE BISECCIÓN ---");
         // Función a evaluar
         System.out.println("La función a evaluar es: f(x) = x^3 - 4x + 1 ");
 
@@ -16,22 +16,64 @@ public class MetodoBiseccion {
         double xl = intervalos[0];
         double xu = intervalos[1];
 
+        // Definir xr viejas y nuevas para los margenes de error por iteracion
+        double xrViejo = 0;
+        double xr = 0;
+        double error = 100;
+        int iteracion = 0;
+    
+        do {
         // Mostrar el calculo de las funciones con los intervalos ingresados
         double funcionXl = funcion(xl);
         double funcionXu = funcion(xu);
-
+        System.out.println("\n------- Iteración " + iteracion + " -------");
+        System.out.println("Intervalo actual: [" + xl + ", " + xu + "]");
         System.out.println("El valor de f(Xl) es: " + funcionXl);
         System.out.println("El valor de f(Xu) es: " + funcionXu);
 
-        double xr = calculoXr(xl, xu);
-
-        double producto = calcularProducto(xl, xu);
-        System.out.println("El valor de f(Xl) * f(Xu) es: " + producto);
+        // Mostrar el valor de Xr
+        xr = calculoXr(xl, xu);
+        double funcionXr = funcion(xr);
         System.out.println("El valor de Xr es: " + xr);
+        System.out.println("El valor de f(Xr) es: " + funcionXr);
 
-        double[] nuevosIntervalos = definirPuntoMedio(xl, xu, producto, xr);
-        System.out.println("Nuevo Xl: " + nuevosIntervalos[0]);
-        System.out.println("Nuevo Xu: " + nuevosIntervalos[1]);
+        double producto;
+        // Calcular el error (excepto en la primera iteración)
+        if (iteracion == 0) {
+            // Calcular el producto de f(Xl) y f(Xu)
+            producto = calcularProducto(xl, xu);
+            System.out.println("El producto de las funciones f(Xl) * f(Xu) es: " + producto);
+
+            // Función para verificar si el producto es negativo o positivo
+            if (producto < 0) {
+                System.out.println("Por lo tanto f(Xl) * f(Xu) < 0. Es posible resolver el método de bisección con estos intervalos.");
+            }
+            else if (producto > 0) {
+                System.out.println("ERROR: El producto de f(Xl) * f(Xu) es positivo. No es posible resolver el método de bisección con estos intervalos.");
+                return;
+            }
+            error = 100;
+
+        } else {
+            // Imprimir el error relativo porcentual
+            error = calcularError(xr, xrViejo);
+            System.out.printf("El error relativo porcentual es: %.2f%%\n", error);
+
+            // Calcular el producto de f(Xl) y f(Xr)
+            producto = funcionXl * funcionXr;
+            System.out.println("El producto de las funciones f(Xl) * f(Xr) es: " + producto);
+        }
+
+        // Actualizar los intervalos
+            double[] nuevosIntervalos = definirPuntoMedio(xl, xu, producto, xr);
+            xl = nuevosIntervalos[0];
+            xu = nuevosIntervalos[1];
+
+        xrViejo = xr;
+        iteracion++;
+        } while (error > 3);
+
+        System.out.printf("\nLa raíz aproximada es: %.6f con un error de: %.2f%%\n", xr, error);
         
         scanner.close();
     }
@@ -83,5 +125,10 @@ public class MetodoBiseccion {
             Xl = Xr;
         } 
         return new double[]{Xl, Xu};
+    }
+
+    // Método para calcular el error relativo porcentual
+    public static double calcularError(double xrNuevo, double xrViejo) {
+        return Math.abs((xrNuevo - xrViejo) / xrNuevo) * 100;
     }
 }
